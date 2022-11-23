@@ -30,6 +30,8 @@ def oware():
             print("\nEmpty bin was chosen. Try again.")
         if messageCode == -2:
             print("\nInvalid input. Try again.")
+        if messageCode == -3:
+            print("\nThere are the move allowing opponent to continue. Try again.")
         
         # Score Tracking
         print("")
@@ -59,7 +61,9 @@ def oware():
         
         # get user input phase
         userInput = input("Enter sth: ")
+        messageCode = 0 ## reset error status
         
+
         # bin detector
         if userInput == "q":
             playing = False
@@ -72,9 +76,16 @@ def oware():
             chosenBin = -2
             messageCode = -2
         print(chosenBin)
-            
-        # clearing stone from the selected bin
+        
+        # give opponent a chance rule
         if chosenBin >= 0:
+            if playerOne and ((bin[chosenBin] + chosenBin) % 12 in list(range(0,6))) and (bin[6:] == [0 for i in range(6)]):
+                messageCode = -3
+            if (not playerOne) and ((bin[chosenBin] + chosenBin) % 12 in list(range(6,12))) and (bin[:6] == [0 for i in range(6)]):
+                messageCode = -3
+
+        # clearing stone from the selected bin
+        if chosenBin >= 0 and messageCode >= 0:
             giveawayPile = bin[chosenBin]
             bin[chosenBin] = 0
             
@@ -82,31 +93,32 @@ def oware():
             if giveawayPile <= 0:
                 messageCode = -1
         
-        # distributing the stone
-        recipient = (chosenBin + 1) % 12
-        
-        while giveawayPile > 0:
-            if recipient == chosenBin: ## skip the chosen bin rule
+            # distributing the stone
+            recipient = (chosenBin + 1) % 12
+            while giveawayPile > 0:
+                if recipient == chosenBin: ## skip the chosen bin rule
+                    recipient = (recipient + 1) % 12
+                bin[recipient] += 1
+                giveawayPile -= 1
                 recipient = (recipient + 1) % 12
-            bin[recipient] += 1
-            giveawayPile -= 1
-            recipient = (recipient + 1) % 12
             
         # Capturing phase eaaffcdffbade/edbbfecfccaaacbeffbddffeafbaabebfcddeebf/aceffddeaf
-        binIndex = (recipient - 1) % 12
-        while bin[binIndex] in [2,3]:
-            if playerOne and (binIndex >= 6):
-                playerOneScore += bin[binIndex]
-            elif (not playerOne) and (binIndex < 6):
-                playerTwoScore += bin[binIndex]
-            
-            if (playerOne and (binIndex >= 6)) or ((not playerOne) and (binIndex < 6)):
-                bin[binIndex] = 0
-            binIndex -= 1
-                
-        # Switching player's turn
         if messageCode >= 0:
+            binIndex = (recipient - 1) % 12
+            while bin[binIndex] in [2,3]:
+                if playerOne and (binIndex >= 6):
+                    playerOneScore += bin[binIndex]
+                elif (not playerOne) and (binIndex < 6):
+                    playerTwoScore += bin[binIndex]
+                
+                if (playerOne and (binIndex >= 6)) or ((not playerOne) and (binIndex < 6)):
+                    bin[binIndex] = 0
+                binIndex -= 1
+                
+            ## Switching player's turn
             playerOne = not(playerOne)
+
+        print("\n-----------------------------")
         
     
     # end of the game
