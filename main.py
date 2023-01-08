@@ -1,4 +1,5 @@
-from board import Oware
+from Game import Oware
 
 game = Oware()
-game.board()
+
+game.board_render()
