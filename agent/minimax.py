@@ -8,6 +8,8 @@
     - repeat for the search
 """
 
+import math
+
 class MiniMax():
     def __init__(self, depth:int = 4):
         self._depth = depth
@@ -15,4 +17,11 @@ class MiniMax():
     def _minimax(self):
         pass
     
+##########################################################
     
+def Minimax(pos, depth:int = 4):
+    if depth == 0: # or game end
+        pass # return score
+    
+    # if playerOne:
+    #     best_score = -math.inf
