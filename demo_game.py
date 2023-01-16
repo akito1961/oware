@@ -77,12 +77,12 @@ def oware():
         #     messageCode = -2
         # print(chosenBin)
         
-        # give opponent a chance rule
-        if chosenBin >= 0:
-            if playerOne and ((bin[chosenBin] + chosenBin) % 12 in list(range(0,6))) and (bin[6:] == [0 for i in range(6)]):
-                messageCode = -3
-            if (not playerOne) and ((bin[chosenBin] + chosenBin) % 12 in list(range(6,12))) and (bin[:6] == [0 for i in range(6)]):
-                messageCode = -3
+        # # give opponent a chance rule
+        # if chosenBin >= 0:
+        #     if playerOne and ((bin[chosenBin] + chosenBin) % 12 in list(range(0,6))) and (bin[6:] == [0 for i in range(6)]):
+        #         messageCode = -3
+        #     if (not playerOne) and ((bin[chosenBin] + chosenBin) % 12 in list(range(6,12))) and (bin[:6] == [0 for i in range(6)]):
+        #         messageCode = -3
 
         # clearing stone from the selected bin
         # if chosenBin >= 0 and messageCode >= 0:

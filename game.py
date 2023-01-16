@@ -67,17 +67,17 @@ class Oware():
         playertwo_stone_left = sum(self._board[6:12])
         return playerone_stones_left == 0 or playertwo_stone_left == 0
     
-    def over(self):
-        return self.playerOne_score >= 25 or self.playerTwo_score >= 25
+    def over(self, idx):
+        return self.playerOne_score >= 25 or self.playerTwo_score >= 25 or not self.giveop_chance(idx)
     # give chance rule is moved to move()
     
     
     """giving opponent moves if possible"""
     def giveop_chance(self, idx: int):
         if self._playerOne:
-            return self.isside_empty() and idx + self._board[idx] >= 6
+            return self.isside_empty() and idx + self._board[idx] < 6
         else:
-            return self.isside_empty() and idx + self._board[idx] >= 12
+            return self.isside_empty() and idx + self._board[idx] < 12
         
     
     """check for zone owner"""
@@ -99,6 +99,10 @@ class Oware():
     
     """moving stone + rule checker"""
     def move(self, idx):
+        
+        if self.over(idx):
+            return self.score()
+        
         ## Illegal move
         
         # empty idx
@@ -146,7 +150,7 @@ class Oware():
             current_idx = (current_idx - 1) % len(self._board)
             
         ## End game detection
-        if self.over():
+        if self.over(idx):
             self.playerOne_score += sum(self._board[0:6])
             self.playerTwo_score += sum(self._board[6:12])
             self._board[0:6] = [0, 0, 0, 0, 0, 0]
