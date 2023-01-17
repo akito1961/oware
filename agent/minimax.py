@@ -11,17 +11,31 @@
 import math
 
 class MiniMax():
-    def __init__(self, depth:int = 4):
-        self._depth = depth
+    # def __init__(self, depth:int = 4):
+    #     self._depth = depth
         
     def _minimax(self):
         pass
     
 ##########################################################
     
-def Minimax(pos, depth:int = 4):
+def Minimax(game, depth:int = 4):
+
+    p1_validmove = [True, True, True, True, True, True,
+                    False, False, False, False, False, False]
+    p2_validmove = [False, False, False, False, False, False,
+                    True, True, True, True, True, True]
+
+    clone = game.clone()
+
+    maximizer = clone.playerone()
+
+    if maximizer:
+
+
     if depth == 0: # or game end
         pass # return score
     
-    # if playerOne:
-    #     best_score = -math.inf
+    if maximizer:
+        best_score = -math.inf
+        for move in

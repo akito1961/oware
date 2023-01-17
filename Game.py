@@ -31,7 +31,7 @@ class Oware():
     def score(self):
         return (self.playerOne_score, self.playerTwo_score)
     
-    def playerone_turn(self):
+    def playerone(self):
         return self._playerOne
     
     def moves(self):
@@ -39,9 +39,21 @@ class Oware():
     
     def history(self):
         return self._history
+
+    def board(self):
+        return self._board
+
+    def valid_move(self):
+        pass
+        # if self._playerOne:
+        #     for idx in range(len(self._board)):
+        #         _valid_idx = 
     
-    # def clone(self):
-    #     return 0
+    def clone(self):
+        return Oware(
+            board= self.board(),
+            playerOne= self.playerone()
+        )
     
     # def score_board(self):
     #     text_score = "Player one : {0: >2} || Player two : {1: >2}".format(self.score())
@@ -66,11 +78,7 @@ class Oware():
         playerone_stones_left = sum(self._board[0:6])
         playertwo_stone_left = sum(self._board[6:12])
         return playerone_stones_left == 0 or playertwo_stone_left == 0
-    
-    def over(self, idx):
-        return self.playerOne_score >= 25 or self.playerTwo_score >= 25 or not self.giveop_chance(idx)
-    # give chance rule is moved to move()
-    
+
     
     """giving opponent moves if possible"""
     def giveop_chance(self, idx: int):
@@ -78,7 +86,11 @@ class Oware():
             return self.isside_empty() and idx + self._board[idx] < 6
         else:
             return self.isside_empty() and idx + self._board[idx] < 12
-        
+    
+    def over(self):
+        return self.playerOne_score >= 25 or self.playerTwo_score >= 25
+    # give chance rule is moved to move()
+
     
     """check for zone owner"""
     @staticmethod
@@ -100,7 +112,7 @@ class Oware():
     """moving stone + rule checker"""
     def move(self, idx):
         
-        if self.over(idx):
+        if self.over():
             return self.score()
         
         ## Illegal move
@@ -150,7 +162,7 @@ class Oware():
             current_idx = (current_idx - 1) % len(self._board)
             
         ## End game detection
-        if self.over(idx):
+        if self.over():
             self.playerOne_score += sum(self._board[0:6])
             self.playerTwo_score += sum(self._board[6:12])
             self._board[0:6] = [0, 0, 0, 0, 0, 0]
@@ -158,3 +170,5 @@ class Oware():
             
         
         self._playerOne = not self._playerOne
+
+        return None
