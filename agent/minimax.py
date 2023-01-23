@@ -31,11 +31,11 @@ def Minimax(game, depth:int = 4):
     maximizer = clone.playerone()
 
     if maximizer:
-
-
+        pass
+    
     if depth == 0: # or game end
         pass # return score
     
     if maximizer:
         best_score = -math.inf
-        for move in
+        # for move in
