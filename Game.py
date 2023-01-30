@@ -15,12 +15,14 @@ class Oware():
     
     def __init__(self,
                  board = None,
-                 playerOne = None):
+                 playerOne = None,
+                 scoretrack = None):
         
         self._board = list(Oware._default_board) if board is None else board
         self._playerOne = True if playerOne is None else (playerOne == True)
-        self.playerOne_score = 0
-        self.playerTwo_score = 0
+        self._scoretrack = [0, 0] if scoretrack is None else scoretrack
+        self.playerOne_score = self._scoretrack[0]
+        self.playerTwo_score = self._scoretrack[1]
         
         # move records
         self._moves = []
@@ -29,7 +31,7 @@ class Oware():
     
     ## accessory functions
     def score(self):
-        return (self.playerOne_score, self.playerTwo_score)
+        return self._scoretrack
     
     def playerone(self):
         return self._playerOne
@@ -43,16 +45,19 @@ class Oware():
     def board(self):
         return self._board
 
-    def valid_move(self):
-        pass
-        # if self._playerOne:
-        #     for idx in range(len(self._board)):
-        #         _valid_idx = 
+    def valid_move(self) -> list:
+        _valid_idx = []
+        for idx in range(len(self._board)):
+            if self._board[idx] != 0 and Oware.own_zone(idx, self._playerOne) and not self.giveop_chance(idx):
+                _valid_idx.append(idx)
+        
+        return _valid_idx
     
     def clone(self):
         return Oware(
-            board= self.board(),
-            playerOne= self.playerone()
+            board = self.board(),
+            playerOne = self.playerone(),
+            scoretrack = self.score()
         )
     
     # def score_board(self):
@@ -88,7 +93,7 @@ class Oware():
             return self.isside_empty() and idx + self._board[idx] < 12
     
     def over(self):
-        return self.playerOne_score >= 25 or self.playerTwo_score >= 25
+        return self._scoretrack[0] >= 25 or self._scoretrack[1] >= 25
     # give chance rule is moved to move()
 
     
@@ -125,7 +130,7 @@ class Oware():
         if not Oware.own_zone(idx, self._playerOne):
             return self.score()
         
-        # give chance
+        # give chance [consider only if one side is empty and the other has a move that can distribute stones to]
         if self.giveop_chance(idx):
             return self.score()
         
@@ -152,23 +157,23 @@ class Oware():
         while self._board[current_idx] in [2,3]:
             # distribute stones to the corresponding player
             if self._playerOne and not Oware.own_zone(current_idx, self._playerOne):
-                self.playerOne_score += self._board[current_idx]
+                self._scoretrack[0] += self._board[current_idx]
                 self._board[current_idx] = 0
                 
             if not self._playerOne and not Oware.own_zone(current_idx, self._playerOne):
-                self.playerTwo_score += self._board[current_idx]
+                self._scoretrack[1] += self._board[current_idx]
                 self._board[current_idx] = 0
             
             current_idx = (current_idx - 1) % len(self._board)
             
         ## End game detection
         if self.over():
-            self.playerOne_score += sum(self._board[0:6])
-            self.playerTwo_score += sum(self._board[6:12])
+            self._scoretrack[0] += sum(self._board[0:6])
+            self._scoretrack[1] += sum(self._board[6:12])
             self._board[0:6] = [0, 0, 0, 0, 0, 0]
             self._board[6:12] = [0, 0, 0, 0, 0, 0]
             
         
         self._playerOne = not self._playerOne
 
-        return None
+        return 0
