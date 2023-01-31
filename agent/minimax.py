@@ -25,7 +25,7 @@ def bestmove(game):
                 bestscore = score
                 move = idx
                 
-        print(clone.moves())
+        print(bestscore)
         return move
     else:
         return clone.score()

@@ -55,9 +55,9 @@ class Oware():
     
     def clone(self):
         return Oware(
-            board = self.board(),
+            board = list(self.board()),
             playerOne = self.playerone(),
-            scoretrack = self.score()
+            scoretrack = list(self.score())
         )
     
     # def score_board(self):
