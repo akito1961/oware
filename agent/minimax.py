@@ -14,29 +14,23 @@ import math
 
 def bestmove(game):
     clone = game.clone()
-    bestscore = -math.inf
+    best_score = math.inf
+    best_move = None
     
     valid_move = clone.valid_move()
     
     if len(valid_move) != 0:
         for idx in valid_move:
             score = _minimax(clone)
-            if score > bestscore:
-                bestscore = score
-                move = idx
+            if score > best_score:
+                best_score = score
+                best_move = idx
                 
-        print(bestscore)
-        return move
-    else:
-        return clone.score()
+    if best_move is not None:
+        return best_move
         
     
 def _minimax(game, depth:int = 8):
-
-    p1_validmove = [True, True, True, True, True, True,
-                    False, False, False, False, False, False]
-    p2_validmove = [False, False, False, False, False, False,
-                    True, True, True, True, True, True]
 
     clone = game.clone()
 
