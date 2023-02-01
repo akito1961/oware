@@ -16,6 +16,8 @@ class Oware():
     def __init__(self,
                  board = None,
                  playerOne = None,
+                 history = None,
+                 moves = None,
                  scoretrack = None):
         
         self._board = list(Oware._default_board) if board is None else board
@@ -24,9 +26,9 @@ class Oware():
         self.playerOne_score = self._scoretrack[0]
         self.playerTwo_score = self._scoretrack[1]
         
-        # move records
-        self._moves = []
-        self._history = []
+        # move & board records
+        self._moves = [] if moves is None else moves
+        self._history = [] if history is None else history
         
     
     ## accessory functions
@@ -57,6 +59,8 @@ class Oware():
         return Oware(
             board = list(self.board()),
             playerOne = self.playerone(),
+            history = list(self.history()),
+            moves = list(self.moves()),
             scoretrack = list(self.score())
         )
     
@@ -135,6 +139,7 @@ class Oware():
             return self.score()
         
         self._moves.append(idx)
+        self._history.append(self.board())
         
         # move stones
         giveaway = self._board[idx]
