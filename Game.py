@@ -20,15 +20,15 @@ class Oware():
                  moves = None,
                  scoretrack = None):
         
-        self._board = list(Oware._default_board) if board is None else board
+        self._board = list(Oware._default_board) if board is None else list(board)
         self._playerOne = True if playerOne is None else (playerOne == True)
-        self._scoretrack = [0, 0] if scoretrack is None else scoretrack
+        self._scoretrack = [0, 0] if scoretrack is None else list(scoretrack)
         self.playerOne_score = self._scoretrack[0]
         self.playerTwo_score = self._scoretrack[1]
         
         # move & board records
-        self._moves = [] if moves is None else moves
-        self._history = [] if history is None else history
+        self._moves = [] if moves is None else list(moves)
+        self._history = [] if history is None else list(history)
         
     
     ## accessory functions
@@ -172,7 +172,7 @@ class Oware():
             current_idx = (current_idx - 1) % len(self._board)
             
         ## End game detection
-        if self.over():
+        if self.over() or self.valid_move() == []:
             self._scoretrack[0] += sum(self._board[0:6])
             self._scoretrack[1] += sum(self._board[6:12])
             self._board[0:6] = [0, 0, 0, 0, 0, 0]

@@ -9,6 +9,7 @@
 """
 
 import math
+from random import choice
     
 ##########################################################
 
@@ -22,12 +23,17 @@ def bestmove(game):
     if len(valid_move) != 0:
         for idx in valid_move:
             score = _minimax(clone)
+            
             if score > best_score:
                 best_score = score
-                best_move = idx
+                best_move = []
+                best_move.append(idx)
+            
+            if score == best_score:
+                best_move.append(idx)
                 
     if best_move is not None:
-        return best_move
+        return choice(best_move)
         
     
 def _minimax(game, depth:int = 8, alpha = -math.inf, beta = math.inf):
