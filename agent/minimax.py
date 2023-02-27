@@ -10,6 +10,7 @@
 
 import math
 from random import choice
+from agent.heuristic import heuristic_fn
     
 ##########################################################
 
@@ -24,6 +25,10 @@ def bestmove(game):
         for idx in valid_move:
             score = _minimax(clone)
             
+            print("Investigating : ", idx)
+            print("Score : ", score)
+            
+            
             if score > best_score:
                 best_score = score
                 best_move = []
@@ -31,21 +36,28 @@ def bestmove(game):
             
             if score == best_score:
                 best_move.append(idx)
+            
+            # if score > best_score:
+            #     best_score = score
+            #     best_move = idx
                 
+    print("best move idx : ", best_move)
     if best_move is not None:
         return choice(best_move)
         
     
-def _minimax(game, depth:int = 8, alpha = -math.inf, beta = math.inf):
+def _minimax(game, depth:int = 8, alpha = -math.inf, beta = math.inf, scoretrack = None):
 
     clone = game.clone()
+    
+    init_score = clone.score() if scoretrack is None else list(scoretrack)
 
     maximizer = clone.playerone()
     
     if depth == 0 or clone.valid_move() == []: # or game end
-        score = clone.score()
+        score = heuristic_fn(clone, init_score)
         # print("---------- End Leaf Node ----------\n")
-        return score[0] - score[1] # return diff score (p1 - p2)
+        return score # return diff score (p1 - p2)
     
     if maximizer:
         max_score = -math.inf
@@ -59,7 +71,7 @@ def _minimax(game, depth:int = 8, alpha = -math.inf, beta = math.inf):
             # print(clone.moves())
             # print(clone.board_render())
             
-            score = _minimax(clone.clone(), depth - 1)
+            score = _minimax(game = clone.clone(), depth = depth - 1, scoretrack = init_score)
             max_score = max(max_score, score)
             alpha = max(alpha, score)
             
@@ -82,7 +94,7 @@ def _minimax(game, depth:int = 8, alpha = -math.inf, beta = math.inf):
             # print(clone.moves())
             # print(clone.board_render())
             
-            score = _minimax(clone.clone(), depth - 1)
+            score = _minimax(game = clone.clone(), depth = depth - 1, scoretrack = init_score)
             min_score = min(score, min_score)
             beta = min(beta, score)
             

@@ -1,18 +1,75 @@
+"""
+Heuristic Ideas
+- Most seeds in a pit /
+- Right-most pit
+- Max Gain By AI /
+- Min Gain By a player /
+- Sum seeds in the owner side /
+- Move Diversity /
+"""
 
-def _h1(): # right-most pit seed possible
-    pass
+import math
 
-def _h2(): # seed on the owner side
-    pass
+def _h1(valid_move, board): # most seed in the pit
+    max = -math.inf
+    
+    if len(valid_move) != 0:
+        for idx in valid_move:
+            if board[idx] > max:
+                max = board[idx]
+    else:
+        max = 0
+            
+    return max
 
-def _h3(): # possible move diversity and maintaining options
-    pass
+def _h2(board, playerone): # seed dif between both sides
+    
+    # if playerone:
+    #     sum_seed = sum(board[0:6])
+    # else:
+    #     sum_seed = sum(board[6:12])
+    
+    p_sum = sum(board[0:6])
+    ai_sum = sum(board[6:12])
+    
+    return ai_sum - p_sum
 
-def _h4(): # max score gain for AI
-    pass
+def _h3(valid_move): # possible move diversity and maintaining options
+    return len(valid_move)
+    
+def _h4(init_score, final_score): # max score gain for AI
+    return final_score - init_score
 
 def _h5(): # right-most pit availability
     pass
 
-def _h6(): # min score gain for player
-    pass
+def _h6(init_score, final_score): # min score gain for player
+    return final_score - init_score
+
+########################################
+
+def heuristic_fn(game, init_score):
+    clone = game.clone()
+    
+    valid_move = clone.valid_move()
+    board = clone.board()
+    playerone = clone.playerone()
+    final_score = clone.score()
+    
+    ### score set up ###
+    p_init_score = init_score[0]
+    ai_init_score = init_score[1]
+    p_final_score = final_score[0]
+    ai_final_score = final_score[1]
+    
+    H1 = _h1(valid_move, board)
+    H2 = _h2(board, playerone)
+    H3 = _h3(valid_move)
+    H4 = _h4(ai_init_score, ai_final_score)
+    H6 = _h6(p_init_score, p_final_score)
+    
+    score = (0.75 * H1) + (0.3 * H2) + (0.1 * H3) + H4 - (1.5 * H6)
+    
+    # print("h score : ", score, H1, H2, H3, H4, H6)
+    
+    return score

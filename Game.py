@@ -33,19 +33,19 @@ class Oware():
     
     ## accessory functions
     def score(self):
-        return self._scoretrack
+        return list(self._scoretrack)
     
     def playerone(self):
         return self._playerOne
     
     def moves(self):
-        return self._moves
+        return list(self._moves)
     
     def history(self):
-        return self._history
+        return list(self._history)
 
     def board(self):
-        return self._board
+        return list(self._board)
 
     def valid_move(self) -> list:
         _valid_idx = []
