@@ -25,8 +25,8 @@ def bestmove(game):
         for idx in valid_move:
             score = _minimax(clone)
             
-            print("Investigating : ", idx)
-            print("Score : ", score)
+            # print("Investigating : ", idx)
+            # print("Score : ", score)
             
             
             if score > best_score:
@@ -41,9 +41,9 @@ def bestmove(game):
             #     best_score = score
             #     best_move = idx
                 
-    print("best move idx : ", best_move)
+    # print("best move idx : ", best_move)
     if best_move is not None:
-        return choice(best_move)
+        return choice(best_move), best_score
         
     
 def _minimax(game, depth:int = 8, alpha = -math.inf, beta = math.inf, scoretrack = None):
