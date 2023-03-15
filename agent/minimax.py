@@ -52,31 +52,22 @@ def _minimax(game, depth:int = 8, alpha = -math.inf, beta = math.inf, scoretrack
     
     init_score = clone.score() if scoretrack is None else list(scoretrack)
 
-    maximizer = clone.playerone()
+    is_ai = not clone.playerone()
     
     if depth == 0 or clone.valid_move() == []: # or game end
         score = heuristic_fn(clone, init_score)
         # print("---------- End Leaf Node ----------\n")
         return score # return diff score (p1 - p2)
     
-    if maximizer:
+    if is_ai:
         max_score = -math.inf
-        # find the best move for player one
+        # find the best move for AI
         for idx in clone.valid_move():
-            # print("--P1 Turn--")
-            
             clone.move(idx)
             
-            # print("Chosen Idx: ", idx)
-            # print(clone.moves())
-            # print(clone.board_render())
-            
-            score = _minimax(game = clone.clone(), depth = depth - 1, scoretrack = init_score)
+            score = _minimax(game = clone.clone(), depth = depth - 1, alpha = alpha, beta = beta, scoretrack = init_score)
             max_score = max(max_score, score)
             alpha = max(alpha, score)
-            
-            # print("State Score : ", max_score)
-            # print("Player Score : ", clone.score())
             
             if beta <= alpha:
                 return max_score
@@ -84,22 +75,13 @@ def _minimax(game, depth:int = 8, alpha = -math.inf, beta = math.inf, scoretrack
         return max_score
     else:
         min_score = math.inf
-        # find the best move player two (AI)
-        for idx in clone.valid_move():
-            # print("--AI Turn--")
-            
+        # find the best move for opponent
+        for idx in clone.valid_move():            
             clone.move(idx)
-            
-            # print("Chosen Idx: ", idx)
-            # print(clone.moves())
-            # print(clone.board_render())
-            
-            score = _minimax(game = clone.clone(), depth = depth - 1, scoretrack = init_score)
+
+            score = _minimax(game = clone.clone(), depth = depth - 1, alpha = alpha, beta = beta, scoretrack = init_score)
             min_score = min(score, min_score)
             beta = min(beta, score)
-            
-            # print("State Score : ", min_score)
-            # print("Player Score : ", clone.score())
             
             if beta <= alpha:
                 return min_score
