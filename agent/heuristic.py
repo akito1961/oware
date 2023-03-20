@@ -10,28 +10,27 @@ Heuristic Ideas
 
 import math
 
-def _h1(valid_move, board): # most seed in the pit
-    max = -math.inf
+def _h1(valid_move, board): # most seed in the right most pit for AI
     
-    if len(valid_move) != 0:
-        for idx in valid_move:
-            if board[idx] > max:
-                max = board[idx]
-    else:
-        max = 0
+    max = board[-1]
             
     return max
 
-def _h2(board, playerone): # seed dif between both sides
+def _h2(board, playerone): # seed for Ai side
     
-    p_sum = sum(board[0:6])
     ai_sum = sum(board[6:12])
     
-    
-    return ai_sum - p_sum
+    return ai_sum
 
-def _h3(valid_move): # possible move diversity and maintaining options
-    return len(valid_move)
+def _h3(board): # possible move diversity and maintaining options
+    count = 0
+    ai_board = list(board[6:12])
+    
+    for seeds in ai_board:
+        if seeds != 0:
+            count += 1
+            
+    return count
     
 def _h4(init_score, final_score): # max score gain for AI
     return final_score - init_score
@@ -58,11 +57,11 @@ def heuristic_fn(game, init_score):
     
     H1 = _h1(valid_move, board)
     H2 = _h2(board, playerone)
-    H3 = _h3(valid_move)
+    H3 = _h3(board)
     H4 = _h4(ai_init_score, ai_final_score)
     H5 = _h5(p_init_score, p_final_score)
     
-    score = (1 * H1) + (1 * H2) + (1 * H3) + H4 - (1 * H5)
+    score = (1 * H1) + (1 * H2) + (1 * H3) + (1 * H4) - (1 * H5)
     
     # print("h score : ", score, H1, H2, H3, H4, H6)
     

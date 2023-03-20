@@ -46,13 +46,13 @@ def bestmove(game):
         return choice(best_move), best_score
         
     
-def _minimax(game, depth:int = 8, alpha = -math.inf, beta = math.inf, scoretrack = None):
+def _minimax(game, ai = None, depth:int = 8, alpha = -math.inf, beta = math.inf, scoretrack = None):
 
     clone = game.clone()
     
     init_score = clone.score() if scoretrack is None else list(scoretrack)
 
-    is_ai = not clone.playerone()
+    is_ai = True if ai is None else ai
     
     if depth == 0 or clone.valid_move() == []: # or game end
         score = heuristic_fn(clone, init_score)
@@ -65,7 +65,7 @@ def _minimax(game, depth:int = 8, alpha = -math.inf, beta = math.inf, scoretrack
         for idx in clone.valid_move():
             clone.move(idx)
             
-            score = _minimax(game = clone.clone(), depth = depth - 1, alpha = alpha, beta = beta, scoretrack = init_score)
+            score = _minimax(game = clone.clone(), ai = False, depth = depth - 1, alpha = alpha, beta = beta, scoretrack = init_score)
             max_score = max(max_score, score)
             alpha = max(alpha, score)
             
@@ -79,7 +79,7 @@ def _minimax(game, depth:int = 8, alpha = -math.inf, beta = math.inf, scoretrack
         for idx in clone.valid_move():            
             clone.move(idx)
 
-            score = _minimax(game = clone.clone(), depth = depth - 1, alpha = alpha, beta = beta, scoretrack = init_score)
+            score = _minimax(game = clone.clone(), ai = True, depth = depth - 1, alpha = alpha, beta = beta, scoretrack = init_score)
             min_score = min(score, min_score)
             beta = min(beta, score)
             
