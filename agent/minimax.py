@@ -14,7 +14,7 @@ from agent.heuristic import heuristic_fn
     
 ##########################################################
 
-def bestmove(game):
+def bestmove(game, weight_h = [1,1,1,1,1]):
     clone = game.clone()
     best_score = -math.inf
     best_move = None
@@ -23,7 +23,7 @@ def bestmove(game):
     
     if len(valid_move) != 0:
         for idx in valid_move:
-            score = _minimax(clone)
+            score = _minimax(clone, weight_h = weight_h)
             
             # print("Investigating : ", idx)
             # print("Score : ", score)
@@ -46,16 +46,15 @@ def bestmove(game):
         return choice(best_move), best_score
         
     
-def _minimax(game, ai = None, depth:int = 8, alpha = -math.inf, beta = math.inf, scoretrack = None):
+def _minimax(game, ai = None, depth:int = 8, alpha = -math.inf, beta = math.inf, scoretrack = None, weight_h:list = [1,1,1,1,1]):
 
     clone = game.clone()
-    
     init_score = clone.score() if scoretrack is None else list(scoretrack)
 
     is_ai = True if ai is None else ai
     
     if depth == 0 or clone.valid_move() == []: # or game end
-        score = heuristic_fn(clone, init_score)
+        score = heuristic_fn(clone, init_score, list(weight_h))
         # print("---------- End Leaf Node ----------\n")
         return score # return diff score (p1 - p2)
     
@@ -70,7 +69,7 @@ def _minimax(game, ai = None, depth:int = 8, alpha = -math.inf, beta = math.inf,
             alpha = max(alpha, score)
             
             if beta <= alpha:
-                return max_score
+                return alpha
             
         return max_score
     else:
@@ -84,6 +83,6 @@ def _minimax(game, ai = None, depth:int = 8, alpha = -math.inf, beta = math.inf,
             beta = min(beta, score)
             
             if beta <= alpha:
-                return min_score
+                return beta
             
         return min_score

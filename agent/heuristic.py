@@ -8,15 +8,13 @@ Heuristic Ideas
 - Move Diversity /
 """
 
-import math
-
-def _h1(valid_move, board): # most seed in the right most pit for AI
+def _h1(board): # most seed in the right most pit for AI
     
     max = board[-1]
             
     return max
 
-def _h2(board, playerone): # seed for Ai side
+def _h2(board): # seed for Ai side
     
     ai_sum = sum(board[6:12])
     
@@ -40,7 +38,7 @@ def _h5(init_score, final_score): # min score gain for player
 
 ########################################
 
-def heuristic_fn(game, init_score):
+def heuristic_fn(game, init_score, weight):
     clone = game.clone()
     
     valid_move = clone.valid_move()
@@ -55,13 +53,21 @@ def heuristic_fn(game, init_score):
     p_final_score = final_score[0]
     ai_final_score = final_score[1]
     
-    H1 = _h1(valid_move, board)
-    H2 = _h2(board, playerone)
+    ### reading each heuristic ###
+    H1 = _h1(board)
+    H2 = _h2(board)
     H3 = _h3(board)
     H4 = _h4(ai_init_score, ai_final_score)
     H5 = _h5(p_init_score, p_final_score)
     
-    score = (1 * H1) + (1 * H2) + (1 * H3) + (1 * H4) - (1 * H5)
+    ### reading each weight ###
+    w1 = weight[0]
+    w2 = weight[1]
+    w3 = weight[2]
+    w4 = weight[3]
+    w5 = weight[4]
+    
+    score = (w1 * H1) + (w2 * H2) + (w3 * H3) + (w4 * H4) - (w5 * H5)
     
     # print("h score : ", score, H1, H2, H3, H4, H6)
     
