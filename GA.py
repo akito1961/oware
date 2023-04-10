@@ -6,27 +6,23 @@ from agent.minimax import bestmove
 weight = [round(random.random(), 5) for _ in range(1000)]
 
 def _rand_seq():
-    seq = []
-    for i in range(5):
-        seq.append(random.choice(weight))
+    seq = random.choices(weight, k = 5)
     
     return seq
 
 def _fill_pool(pool, n):
     for i in range(n):
-        pool.append(_rand_seq())
+        pool[0].append(_rand_seq())
+        pool[1].append(_eval(pool[0][i]))
         
     return pool
 
+## evaluation func (win rates)
 def _eval(seq):
-    P1 = 0
     agent = 0
-    tie = 0
+    test_round = 15
 
-    test_round = 10
-
-
-    for round in range(test_round):
+    for _ in range(test_round):
         playing = True
         oware = Oware()
 
@@ -48,12 +44,6 @@ def _eval(seq):
 
         score = oware.score()
 
-        if score[0] > score[1]:
-            P1 += 1
-
-        if score[0] == score[1]:
-            tie += 1
-
         if score[0] < score[1]:
             agent += 1
     
@@ -63,22 +53,25 @@ def _prune_pool(pool, r):
     max = -math.inf
     min = math.inf
     
-    for i in range(int(0.3 * len(pool))):
-        rate = _eval(pool[i])
+    for i in range(int(0.3 * len(pool[0]))):
+        rate = pool[1][i]
         if rate > max:
             max = rate
         if rate < min:
             min = rate
     
     threshold = min + (r * (max - min))
+    print(f"Min : {min}, Max : {max}, Threshold :{threshold}")
     
-    new_pool = []
+    new_pool = [[],
+                []]
     
-    for seq in pool:
-        eval_string = _eval(seq)
+    for idx, seq in enumerate(pool[0]):
+        eval_score = pool[1][idx]
         
-        if eval_string >= threshold:
-            new_pool.append(seq)
+        if eval_score >= threshold:
+            new_pool[0].append(seq)
+            new_pool[1].append(eval_score)
     
     return new_pool
     
@@ -89,15 +82,17 @@ def _mutate(seq):
     return seq
 
 def _mutate_pool(pool, n):
-    for i in range(n):
-        seq = random.choice(pool)
+    for _ in range(n):
+        idx = random.randint(0, len(pool[0]) - 1)
+        seq = pool[0][idx]
         m_seq = _mutate(seq)
         
-        before = _eval(seq)
+        before = pool[1][idx]
         after = _eval(m_seq)
         
         if after > before:
-            pool.append(m_seq)
+            pool[0].append(m_seq)
+            pool[1].append(after)
     
     return pool
 
@@ -114,39 +109,54 @@ def _crossover(seq1, seq2):
     return new_seq
 
 def _crossover_pool(pool, n):
-    for i in range(n):
-        seq1 = random.choice(pool)
-        seq2 = random.choice(pool)
+    for _ in range(n):
+        idx1 = random.randint(0, len(pool[0]) - 1)
+        idx2 = random.randint(0, len(pool[0]) - 1)
+        seq1 = pool[0][idx1]
+        seq2 = pool[0][idx2]
         new_seq = _crossover(seq1, seq2)
         
-        before = max(_eval(seq1), _eval(seq2))
+        before = max(pool[1][idx1], pool[1][idx2])
         after = _eval(new_seq)
         
         if after > before:
-            pool.append(new_seq)
+            pool[0].append(new_seq)
+            pool[1].append(after)
     
     return pool
 
 
 def GA(n:int):
-    pool = []
+    pool = [[[0.50977, 0.02955, 0.95023, 0.58639, 0.15762], [0.29725, 0.31944, 0.27948, 0.02652, 0.82101], [0.65647, 0.24793, 0.95775, 0.6028, 0.23072]],
+            [0.8, 0.8, 0.8666666666666667]]
+    
+    # [[],
+    #         []]
+    
     for round in range(n):
         
-        pool = _fill_pool(pool, 30)
-        print(f"After filling : {len(pool)}")
+        pool = _fill_pool(pool, 50)
+        print(f"After filling : {len(pool[0])}")
         
-        pool = _mutate_pool(pool, 10)
-        print(f"After mutation : {len(pool)}")
+        pool = _mutate_pool(pool, 15)
+        print(f"After mutation : {len(pool[0])}")
         
-        pool = _crossover_pool(pool, 10)
-        print(f"After Crossing over : {len(pool)}")
+        pool = _crossover_pool(pool, 15)
+        print(f"After Crossing over : {len(pool[0])}")
         
         pool = _prune_pool(pool, 0.8)
-        print(f"After pruning : {len(pool)}")
+        print(f"After pruning : {len(pool[0])}")
     
-    with open("result/weight_03272023.txt", "w") as file:
-        file.write(pool)
+        print(pool)
+    
+    text = []
+    
+    with open("result/weight_04072023.txt", "w") as file:
+        for idx, line in enumerate(pool[0]):
+            text.append(f"weight : {line} , score : {pool[1][idx]}\n")
+        
+        file.writelines(text)
 
 
 
-GA(10)
+GA(20)
