@@ -64,7 +64,7 @@ def _minimax(game, ai = None, depth:int = 8, alpha = -math.inf, beta = math.inf,
         for idx in clone.valid_move():
             clone.move(idx)
             
-            score = _minimax(game = clone.clone(), ai = False, depth = depth - 1, alpha = alpha, beta = beta, scoretrack = init_score)
+            score = _minimax(game = clone.clone(), ai = False, depth = depth - 1, alpha = alpha, beta = beta, scoretrack = init_score, weight_h=weight_h)
             max_score = max(max_score, score)
             alpha = max(alpha, score)
             
@@ -78,7 +78,7 @@ def _minimax(game, ai = None, depth:int = 8, alpha = -math.inf, beta = math.inf,
         for idx in clone.valid_move():            
             clone.move(idx)
 
-            score = _minimax(game = clone.clone(), ai = True, depth = depth - 1, alpha = alpha, beta = beta, scoretrack = init_score)
+            score = _minimax(game = clone.clone(), ai = True, depth = depth - 1, alpha = alpha, beta = beta, scoretrack = init_score, weight_h=weight_h)
             min_score = min(score, min_score)
             beta = min(beta, score)
             

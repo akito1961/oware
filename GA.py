@@ -4,6 +4,7 @@ from Game import Oware
 from agent.minimax import bestmove
 
 weight = [round(random.random(), 5) for _ in range(1000)]
+weight.append(1)
 
 def _rand_seq():
     seq = random.choices(weight, k = 5)
@@ -20,7 +21,7 @@ def _fill_pool(pool, n):
 ## evaluation func (win rates)
 def _eval(seq):
     agent = 0
-    test_round = 15
+    test_round = 20
 
     for _ in range(test_round):
         playing = True
@@ -102,9 +103,9 @@ def _crossover(seq1, seq2):
     
     for i in range(len(seq1)):
         if i < p:
-            new_seq.append(seq1)
+            new_seq.append(seq1[i])
         else:
-            new_seq.append(seq2)
+            new_seq.append(seq2[i])
     
     return new_seq
 
@@ -127,21 +128,21 @@ def _crossover_pool(pool, n):
 
 
 def GA(n:int):
-    pool = [[[0.50977, 0.02955, 0.95023, 0.58639, 0.15762], [0.29725, 0.31944, 0.27948, 0.02652, 0.82101], [0.65647, 0.24793, 0.95775, 0.6028, 0.23072]],
-            [0.8, 0.8, 0.8666666666666667]]
+    pool = [[],
+            []]
     
     # [[],
     #         []]
     
     for round in range(n):
         
-        pool = _fill_pool(pool, 50)
+        pool = _fill_pool(pool, 20)
         print(f"After filling : {len(pool[0])}")
         
-        pool = _mutate_pool(pool, 15)
+        pool = _mutate_pool(pool, 10)
         print(f"After mutation : {len(pool[0])}")
         
-        pool = _crossover_pool(pool, 15)
+        pool = _crossover_pool(pool, 10)
         print(f"After Crossing over : {len(pool[0])}")
         
         pool = _prune_pool(pool, 0.8)
@@ -151,7 +152,7 @@ def GA(n:int):
     
     text = []
     
-    with open("result/weight_04072023.txt", "w") as file:
+    with open("result/weight_04182023.txt", "w") as file:
         for idx, line in enumerate(pool[0]):
             text.append(f"weight : {line} , score : {pool[1][idx]}\n")
         
@@ -159,4 +160,4 @@ def GA(n:int):
 
 
 
-GA(20)
+GA(10)
