@@ -10,10 +10,11 @@
 
 import math
 from random import choice
+from agent.heuristic import heuristic_fn
     
 ##########################################################
 
-def bestmove(game):
+def bestmove(game, weight_h = [1,1,1,1,1]):
     clone = game.clone()
     best_score = -math.inf
     best_move = None
@@ -22,7 +23,11 @@ def bestmove(game):
     
     if len(valid_move) != 0:
         for idx in valid_move:
-            score = _minimax(clone)
+            score = _minimax(clone, weight_h = weight_h)
+            
+            # print("Investigating : ", idx)
+            # print("Score : ", score)
+            
             
             if score > best_score:
                 best_score = score
@@ -31,65 +36,53 @@ def bestmove(game):
             
             if score == best_score:
                 best_move.append(idx)
+            
+            # if score > best_score:
+            #     best_score = score
+            #     best_move = idx
                 
+    # print("best move idx : ", best_move)
     if best_move is not None:
-        return choice(best_move)
+        return choice(best_move), best_score
         
     
-def _minimax(game, depth:int = 8, alpha = -math.inf, beta = math.inf):
+def _minimax(game, ai = None, depth:int = 8, alpha = -math.inf, beta = math.inf, scoretrack = None, weight_h:list = [1,1,1,1,1]):
 
     clone = game.clone()
+    init_score = clone.score() if scoretrack is None else list(scoretrack)
 
-    maximizer = clone.playerone()
+    is_ai = True if ai is None else ai
     
     if depth == 0 or clone.valid_move() == []: # or game end
-        score = clone.score()
+        score = heuristic_fn(clone, init_score, list(weight_h))
         # print("---------- End Leaf Node ----------\n")
-        return score[0] - score[1] # return diff score (p1 - p2)
+        return score # return diff score (p1 - p2)
     
-    if maximizer:
+    if is_ai:
         max_score = -math.inf
-        # find the best move for player one
+        # find the best move for AI
         for idx in clone.valid_move():
-            # print("--P1 Turn--")
-            
             clone.move(idx)
             
-            # print("Chosen Idx: ", idx)
-            # print(clone.moves())
-            # print(clone.board_render())
-            
-            score = _minimax(clone.clone(), depth - 1)
+            score = _minimax(game = clone.clone(), ai = False, depth = depth - 1, alpha = alpha, beta = beta, scoretrack = init_score, weight_h=weight_h)
             max_score = max(max_score, score)
             alpha = max(alpha, score)
             
-            # print("State Score : ", max_score)
-            # print("Player Score : ", clone.score())
-            
             if beta <= alpha:
-                return max_score
+                return alpha
             
         return max_score
     else:
         min_score = math.inf
-        # find the best move player two (AI)
-        for idx in clone.valid_move():
-            # print("--AI Turn--")
-            
+        # find the best move for opponent
+        for idx in clone.valid_move():            
             clone.move(idx)
-            
-            # print("Chosen Idx: ", idx)
-            # print(clone.moves())
-            # print(clone.board_render())
-            
-            score = _minimax(clone.clone(), depth - 1)
+
+            score = _minimax(game = clone.clone(), ai = True, depth = depth - 1, alpha = alpha, beta = beta, scoretrack = init_score, weight_h=weight_h)
             min_score = min(score, min_score)
             beta = min(beta, score)
             
-            # print("State Score : ", min_score)
-            # print("Player Score : ", clone.score())
-            
             if beta <= alpha:
-                return min_score
+                return beta
             
         return min_score
